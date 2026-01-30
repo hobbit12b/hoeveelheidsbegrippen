@@ -26,6 +26,7 @@
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       background: radial-gradient(1200px 700px at 50% -10%, #e8efff, var(--bg));
       color: var(--ink);
+      touch-action: manipulation;
     }
 
     .app{
@@ -463,21 +464,13 @@
       justify-items: center;
       user-select: none;
       min-height: 80px;
+      touch-action: manipulation;
     }
     .choiceBtn:active{ transform: translateY(1px); }
-    .choiceBtn.selected{
-      outline: 6px solid rgba(43,108,255,.18);
-    }
-    .choiceBtn.good{
-      outline: 6px solid rgba(29,155,91,.18);
-    }
-    .choiceBtn.bad{
-      outline: 6px solid rgba(214,69,69,.16);
-    }
-    .choiceBtn .icon{
-      font-size: 26px;
-      line-height: 1;
-    }
+    .choiceBtn.selected{ outline: 6px solid rgba(43,108,255,.18); }
+    .choiceBtn.good{ outline: 6px solid rgba(29,155,91,.18); }
+    .choiceBtn.bad{ outline: 6px solid rgba(214,69,69,.16); }
+    .choiceBtn .icon{ font-size: 26px; line-height: 1; }
 
     .dragWrap{
       display: grid;
@@ -493,1304 +486,11 @@
       display: grid;
       gap: 10px;
       box-shadow: 0 10px 18px rgba(0,0,0,.06);
-    }
-    .draggable{
-      border: 0;
-      border-radius: 20px;
-      background: rgba(43,108,255,.10);
-      border: 1px solid rgba(43,108,255,.18);
-      padding: 14px;
-      display: grid;
-      gap: 8px;
-      justify-items: center;
-      cursor: grab;
-      user-select: none;
-      box-shadow: 0 10px 18px rgba(0,0,0,.06);
-      touch-action: none;
-    }
-    .draggable:active{ cursor: grabbing; }
-    .drIcon{ font-size: 30px; }
-    .dropZones{
-      display: grid;
-      gap: 10px;
-    }
-    .drop{
-      border-radius: 20px;
-      padding: 14px;
-      border: 2px dashed rgba(0,0,0,.18);
-      background: rgba(0,0,0,.02);
-      min-height: 86px;
-      display: grid;
-      grid-template-columns: auto 1fr;
-      gap: 12px;
-      align-items: center;
-    }
-    .drop.ok{
-      border-color: rgba(29,155,91,.34);
-      background: rgba(29,155,91,.08);
-    }
-    .drop.no{
-      border-color: rgba(214,69,69,.30);
-      background: rgba(214,69,69,.07);
-    }
-    .dropIcon{
-      width: 46px;
-      height: 46px;
-      border-radius: 16px;
-      background: #fff;
-      border: 1px solid rgba(0,0,0,.10);
-      display: grid;
-      place-items: center;
-      font-size: 24px;
-      box-shadow: 0 8px 16px rgba(0,0,0,.06);
-      user-select: none;
-    }
-    .dropText{
-      font-weight: 950;
-      font-size: 18px;
-      color: var(--muted);
-      user-select: none;
-    }
-
-    .hidden{ display:none !important; }
-
-    @media (max-width: 1100px){
-      .cardsGrid{ grid-template-columns: 1fr; }
-      .items{ grid-template-columns: repeat(3, 1fr); }
-    }
-  </style>
-</head>
-
-<body>
-  <div class="app">
-
-    <div class="top">
-      <div class="logo" id="homeBtn" title="Start">🛒</div>
-
-      <div class="titleBox">
-        <div class="title">Supermarkt</div>
-        <div class="subtitle" id="subtitle">Kies taak, of mix</div>
-      </div>
-
-      <div class="topRight">
-        <div class="pill">R <b id="roundNr">1</b></div>
-        <div class="pill">✓ <b id="goodNr">0</b>  ✦ <b id="tryNr">0</b></div>
-        <button class="btn primary" id="nextBtn">Volgende</button>
-      </div>
-    </div>
-
-    <div class="taskBar">
-      <div class="taskCard">
-        <div class="taskLeft">
-          <div class="taskIcon" id="taskIcon">🏆</div>
-          <div class="taskHint" id="taskHint">Klik</div>
-        </div>
-        <div class="taskRight">
-          <select id="taskSelect" aria-label="Taak">
-            <option value="mix">mix</option>
-            <option value="t1">1</option>
-            <option value="t2">2</option>
-            <option value="t3">3</option>
-          </select>
-          <button class="btn ghost" id="checkBtn">Check</button>
-        </div>
-      </div>
-
-      <div class="pill" id="tinyPill"> </div>
-    </div>
-
-    <div class="board">
-
-      <!-- Opdracht 1 -->
-      <div id="task1" class="hidden">
-        <div class="baskets three" id="baskets1"></div>
-      </div>
-
-      <!-- Opdracht 2 -->
-      <div id="task2" class="hidden">
-        <div class="cardsGrid" id="cards2"></div>
-      </div>
-
-      <!-- Opdracht 3 -->
-      <div id="task3" class="hidden">
-        <div class="dragWrap">
-          <div class="dragCard">
-            <div class="bigLabel"><span id="dragPromptIcon">🧺</span><span id="dragPromptText"> </span></div>
-            <div class="draggable" id="dragToken" draggable="true">
-              <div class="drIcon">🧺</div>
-              <div style="font-weight:950; font-size:18px; color:var(--muted);" id="dragTokenText"> </div>
-            </div>
-          </div>
-
-          <div class="dropZones">
-            <div class="drop" data-drop="more">
-              <div class="dropIcon">➕</div>
-              <div class="dropText">meer</div>
-            </div>
-            <div class="drop" data-drop="less">
-              <div class="dropIcon">➖</div>
-              <div class="dropText">minder</div>
-            </div>
-            <div class="drop" data-drop="equal">
-              <div class="dropIcon">🟰</div>
-              <div class="dropText">evenveel</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-    <div class="answerRow">
-      <div class="feedback" id="feedback">
-        <div class="face" id="face">🙂</div>
-        <div class="fbText">
-          <div class="fbMain" id="fbMain"> </div>
-          <div class="fbSub" id="fbSub"> </div>
-        </div>
-      </div>
-
-      <div class="miniBtns">
-        <button class="btn" id="revealBtn">Toon</button>
-        <button class="btn" id="resetBtn">Reset</button>
-      </div>
-    </div>
-
-  </div>
-
-  <script>
-    (function(){
-      "use strict";
-
-      const $ = (sel, root=document) => root.querySelector(sel);
-      const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
-
-      const products = [
-        { emoji: "🍎", name: "appels" },
-        { emoji: "🍌", name: "bananen" },
-        { emoji: "🥕", name: "wortels" },
-        { emoji: "🍓", name: "aardbeien" },
-        { emoji: "🍞", name: "brood" },
-        { emoji: "🧀", name: "kaas" },
-        { emoji: "🥛", name: "melk" },
-        { emoji: "🍪", name: "koekjes" },
-        { emoji: "🍇", name: "druiven" },
-        { emoji: "🍊", name: "sinaasappels" }
-      ];
-
-      const state = {
-        round: 1,
-        good: 0,
-        tries: 0,
-
-        taskMode: "mix",     // mix, t1, t2, t3
-        activeTask: "t1",
-
-        // task1
-        t1: { goal: "most", baskets: [], correctIdx: 0, revealed: false },
-
-        // task2
-        t2: { cards: [], selected: new Set(), revealed: false },
-
-        // task3
-        t3: { a: 1, b: 1, correct: "equal", revealed: false, dropped: null },
-
-        config: {
-          maxQty: 6
-        }
-      };
-
-      const ui = {
-        roundNr: $("#roundNr"),
-        goodNr: $("#goodNr"),
-        tryNr: $("#tryNr"),
-
-        taskSelect: $("#taskSelect"),
-        taskIcon: $("#taskIcon"),
-        taskHint: $("#taskHint"),
-        tinyPill: $("#tinyPill"),
-        nextBtn: $("#nextBtn"),
-        checkBtn: $("#checkBtn"),
-
-        task1: $("#task1"),
-        task2: $("#task2"),
-        task3: $("#task3"),
-
-        baskets1: $("#baskets1"),
-        cards2: $("#cards2"),
-
-        dragToken: $("#dragToken"),
-        dragTokenText: $("#dragTokenText"),
-        dragPromptIcon: $("#dragPromptIcon"),
-        dragPromptText: $("#dragPromptText"),
-        drops: $$(".drop"),
-
-        revealBtn: $("#revealBtn"),
-        resetBtn: $("#resetBtn"),
-
-        face: $("#face"),
-        fbMain: $("#fbMain"),
-        fbSub: $("#fbSub"),
-      };
-
-      function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
-      function randInt(min, max){ return Math.floor(Math.random() * (max - min + 1)) + min; }
-      function pick(arr){ return arr[randInt(0, arr.length - 1)]; }
-
-      function setFeedback(face, main, sub){
-        ui.face.textContent = face;
-        ui.fbMain.textContent = main || "";
-        ui.fbSub.textContent = sub || "";
-      }
-
-      function updateScore(){
-        ui.roundNr.textContent = String(state.round);
-        ui.goodNr.textContent = String(state.good);
-        ui.tryNr.textContent = String(state.tries);
-      }
-
-      function setTaskUI(task){
-        // minimale hints, vooral iconen
-        if(task === "t1"){
-          ui.taskIcon.textContent = "🏆";
-          ui.taskHint.textContent = "klik";
-          ui.tinyPill.textContent = "meeste of minste";
-        }
-        if(task === "t2"){
-          ui.taskIcon.textContent = "👆";
-          ui.taskHint.textContent = "tik";
-          ui.tinyPill.textContent = "meer, minder, evenveel";
-        }
-        if(task === "t3"){
-          ui.taskIcon.textContent = "🧲";
-          ui.taskHint.textContent = "sleep";
-          ui.tinyPill.textContent = "meer, minder, evenveel";
-        }
-      }
-
-      function chooseTask(){
-        if(state.taskMode !== "mix") return state.taskMode;
-        const r = Math.random();
-        if(r < 0.34) return "t1";
-        if(r < 0.67) return "t2";
-        return "t3";
-      }
-
-      function buildDots(qty){
-        const maxCells = 9;
-        const onCount = clamp(qty, 0, maxCells);
-        const arr = new Array(maxCells).fill(false).map((_, i) => i < onCount);
-
-        // shuffle for less counting pattern
-        for(let i = arr.length - 1; i > 0; i--){
-          const j = randInt(0, i);
-          [arr[i], arr[j]] = [arr[j], arr[i]];
-        }
-
-        const card = document.createElement("div");
-        card.className = "dotCard";
-        arr.forEach(on => {
-          const d = document.createElement("div");
-          d.className = "dot" + (on ? " on" : "");
-          card.appendChild(d);
-        });
-        return card;
-      }
-
-      function renderBasket(el, label, product, qty){
-        el.innerHTML = "";
-
-        const head = document.createElement("div");
-        head.className = "bHead";
-
-        const nm = document.createElement("div");
-        nm.className = "bName";
-        nm.textContent = label;
-
-        const bd = document.createElement("div");
-        bd.className = "bBadge";
-        bd.textContent = product.name;
-
-        head.appendChild(nm);
-        head.appendChild(bd);
-
-        const items = document.createElement("div");
-        items.className = "items";
-        for(let i = 0; i < qty; i++){
-          const it = document.createElement("div");
-          it.className = "item";
-          it.textContent = product.emoji;
-          items.appendChild(it);
-        }
-
-        const dotsRow = document.createElement("div");
-        dotsRow.className = "dotsRow";
-        dotsRow.appendChild(buildDots(qty));
-
-        const mini = document.createElement("div");
-        mini.style.fontWeight = "900";
-        mini.style.color = "var(--muted)";
-        mini.style.fontSize = "14px";
-        mini.textContent = " ";
-        dotsRow.appendChild(mini);
-
-        el.appendChild(head);
-        el.appendChild(items);
-        el.appendChild(dotsRow);
-      }
-
-      // Task 1, click baskets for most or least
-      function makeTask1(){
-        state.t1.revealed = false;
-
-        const max = clamp(state.config.maxQty, 3, 12);
-        const goal = Math.random() < 0.5 ? "most" : "least";
-        state.t1.goal = goal;
-
-        let a = randInt(1, max);
-        let b = randInt(1, max);
-        let c = randInt(1, max);
-
-        const seen = new Set([a]);
-        while(seen.has(b)) b = randInt(1, max);
-        seen.add(b);
-        while(seen.has(c)) c = randInt(1, max);
-
-        const p = pick(products);
-        state.t1.baskets = [
-          { label: "A", qty: a, product: p },
-          { label: "B", qty: b, product: p },
-          { label: "C", qty: c, product: p }
-        ];
-
-        const qtys = [a,b,c];
-        const idx = goal === "most" ? qtys.indexOf(Math.max(...qtys)) : qtys.indexOf(Math.min(...qtys));
-        state.t1.correctIdx = idx;
-
-        ui.baskets1.innerHTML = "";
-        ui.baskets1.className = "baskets three";
-
-        state.t1.baskets.forEach((bk, i) => {
-          const el = document.createElement("div");
-          el.className = "basket clickable";
-          el.dataset.idx = String(i);
-          renderBasket(el, "Mandje " + bk.label, bk.product, bk.qty);
-
-          el.addEventListener("click", () => {
-            if(state.activeTask !== "t1") return;
-            if(state.t1.revealed) return;
-
-            state.tries += 1;
-            updateScore();
-
-            const ok = i === state.t1.correctIdx;
-            if(ok){
-              state.good += 1;
-              state.round += 1;
-              updateScore();
-              setFeedback("😄", "goed", " ");
-              el.classList.add("good");
-              state.t1.revealed = true;
-            }else{
-              setFeedback("😕", "nog", " ");
-              el.classList.add("bad");
-              setTimeout(() => el.classList.remove("bad"), 420);
-            }
-          });
-
-          ui.baskets1.appendChild(el);
-        });
-
-        setFeedback("👀", goal === "most" ? "meeste" : "minste", " ");
-      }
-
-      // Task 2, multi select correct boxes
-      function makeComparePair(max){
-        let a = randInt(1, max);
-        let b = randInt(1, max);
-        while(a === b){
-          b = randInt(1, max);
-        }
-        return [a,b];
-      }
-
-      function relation(a,b){
-        if(a > b) return "more";
-        if(a < b) return "less";
-        return "equal";
-      }
-
-      function relIcon(rel){
-        if(rel === "more") return "➕";
-        if(rel === "less") return "➖";
-        return "🟰";
-      }
-
-      function makeTask2(){
-        state.t2.revealed = false;
-        state.t2.selected = new Set();
-
-        const max = clamp(state.config.maxQty, 3, 12);
-
-        // three cards, can have multiple correct among them
-        // prompt chooses one relation, then multiple cards match
-        const promptRel = pick(["more","less","equal"]);
-        const promptIcon = relIcon(promptRel);
-
-        const cards = [];
-
-        // build 3 comparisons, ensure at least one matches promptRel
-        let ensured = false;
-
-        for(let i = 0; i < 3; i++){
-          const p = pick(products);
-          const [a,b] = makeComparePair(max);
-
-          const rel = relation(a,b);
-          cards.push({ id: "c" + i, product: p, a, b, rel });
-
-          if(rel === promptRel) ensured = true;
-        }
-
-        if(!ensured){
-          // force one card to match promptRel
-          const j = randInt(0, 2);
-          const p = cards[j].product;
-
-          if(promptRel === "equal"){
-            const a = randInt(1, max);
-            cards[j] = { id: "c" + j, product: p, a, b: a, rel: "equal" };
-          }else if(promptRel === "more"){
-            let a = randInt(2, max);
-            let b = randInt(1, a - 1);
-            cards[j] = { id: "c" + j, product: p, a, b, rel: "more" };
-          }else{
-            let b = randInt(2, max);
-            let a = randInt(1, b - 1);
-            cards[j] = { id: "c" + j, product: p, a, b, rel: "less" };
-          }
-        }
-
-        state.t2.cards = cards;
-        state.t2.promptRel = promptRel;
-
-        ui.cards2.innerHTML = "";
-        ui.cards2.className = "cardsGrid";
-
-        cards.forEach((c) => {
-          const box = document.createElement("div");
-          box.className = "cardBox";
-          box.dataset.id = c.id;
-
-          const top = document.createElement("div");
-          top.className = "cardTop";
-
-          const lbl = document.createElement("div");
-          lbl.className = "bigLabel";
-          lbl.innerHTML = `<span style="font-size:26px;">🧺</span><span>ik heb</span>`;
-
-          const chip = document.createElement("div");
-          chip.className = "chip";
-          chip.textContent = " ";
-
-          top.appendChild(lbl);
-          top.appendChild(chip);
-
-          const row = document.createElement("div");
-          row.className = "compareRow";
-
-          const left = document.createElement("div");
-          left.className = "miniBasket";
-
-          const leftItems = document.createElement("div");
-          leftItems.className = "miniItems";
-          for(let i = 0; i < c.a; i++){
-            const it = document.createElement("div");
-            it.className = "miniItem";
-            it.textContent = c.product.emoji;
-            leftItems.appendChild(it);
-          }
-          left.appendChild(leftItems);
-
-          const mid = document.createElement("div");
-          mid.className = "equals";
-          mid.textContent = "↔";
-
-          const right = document.createElement("div");
-          right.className = "miniBasket";
-
-          const rightItems = document.createElement("div");
-          rightItems.className = "miniItems";
-          for(let i = 0; i < c.b; i++){
-            const it = document.createElement("div");
-            it.className = "miniItem";
-            it.textContent = c.product.emoji;
-            rightItems.appendChild(it);
-          }
-          right.appendChild(rightItems);
-
-          row.appendChild(left);
-          row.appendChild(mid);
-          row.appendChild(right);
-
-          const choices = document.createElement("div");
-          choices.className = "choiceLine";
-
-          const makeBtn = (rel, icon, word) => {
-            const btn = document.createElement("button");
-            btn.className = "choiceBtn";
-            btn.type = "button";
-            btn.dataset.rel = rel;
-            btn.innerHTML = `<div class="icon">${icon}</div><div>${word}</div>`;
-            btn.addEventListener("click", () => {
-              if(state.activeTask !== "t2") return;
-              if(state.t2.revealed) return;
-
-              const key = c.id + ":" + rel;
-              const already = state.t2.selected.has(key);
-              if(already){
-                state.t2.selected.delete(key);
-                btn.classList.remove("selected");
-              }else{
-                state.t2.selected.add(key);
-                btn.classList.add("selected");
-              }
-            });
-            return btn;
-          };
-
-          choices.appendChild(makeBtn("more","➕","meer"));
-          choices.appendChild(makeBtn("less","➖","minder"));
-          choices.appendChild(makeBtn("equal","🟰","evenveel"));
-
-          box.appendChild(top);
-          box.appendChild(row);
-          box.appendChild(choices);
-
-          ui.cards2.appendChild(box);
-        });
-
-        setFeedback(promptIcon, "tik", " ");
-        ui.tinyPill.textContent = promptRel === "more" ? "meer" : promptRel === "less" ? "minder" : "evenveel";
-      }
-
-      function checkTask2(){
-        if(state.activeTask !== "t2") return;
-
-        state.tries += 1;
-        updateScore();
-
-        const promptRel = state.t2.promptRel;
-        // correct set: for each card, only the button that matches actual relation counts as correct
-        // but the instruction is: click all boxes where you see promptRel
-        // so: correct answers are cards whose relation equals promptRel, and within those, the pressed button must be the promptRel
-        // simplest for kids: they must click the promptRel button on each matching card, and not click promptRel on non matching cards
-
-        const correctCards = state.t2.cards.filter(c => c.rel === promptRel).map(c => c.id);
-        const correctKeys = new Set(correctCards.map(id => id + ":" + promptRel));
-
-        // evaluate: selected must equal correctKeys
-        let ok = true;
-        // any missing
-        for(const k of correctKeys){
-          if(!state.t2.selected.has(k)) ok = false;
-        }
-        // any extra
-        for(const k of state.t2.selected){
-          if(!correctKeys.has(k)) ok = false;
-        }
-
-        if(ok){
-          state.good += 1;
-          state.round += 1;
-          updateScore();
-          setFeedback("😄", "goed", " ");
-          state.t2.revealed = true;
-          // mark UI
-          $$(".choiceBtn", ui.cards2).forEach(btn => {
-            const box = btn.closest(".cardBox");
-            const id = box.dataset.id;
-            const rel = btn.dataset.rel;
-            const key = id + ":" + rel;
-            if(correctKeys.has(key)) btn.classList.add("good");
-            else if(state.t2.selected.has(key)) btn.classList.add("bad");
-          });
-        }else{
-          setFeedback("😕", "nog", " ");
-          // quick hint by flashing correct ones only if reveal later, now do nothing
-        }
-      }
-
-      // Task 3, drag token to drop zone
-      function makeTask3(){
-        state.t3.revealed = false;
-        state.t3.dropped = null;
-
-        const max = clamp(state.config.maxQty, 3, 12);
-
-        let a = randInt(1, max);
-        let b = randInt(1, max);
-
-        // allow equal sometimes
-        if(Math.random() < 0.28){
-          b = a;
-        }else{
-          while(a === b) b = randInt(1, max);
-        }
-
-        state.t3.a = a;
-        state.t3.b = b;
-        state.t3.correct = relation(a,b);
-
-        // show prompt as minimal icon content
-        ui.dragPromptIcon.textContent = "🧺";
-        ui.dragPromptText.textContent = " ";
-
-        // token text shows tiny picture instead of text
-        const p = pick(products);
-        ui.dragToken.querySelector(".drIcon").textContent = p.emoji;
-        ui.dragTokenText.textContent = String(a) + " ↔ " + String(b);
-
-        // reset drop zone styles
-        ui.drops.forEach(d => {
-          d.classList.remove("ok","no");
-        });
-
-        setFeedback("🧲", "sleep", " ");
-        ui.tinyPill.textContent = "➕  ➖  🟰";
-      }
-
-      function allowDrop(e){ e.preventDefault(); }
-
-      function onDrop(e){
-        e.preventDefault();
-        if(state.activeTask !== "t3") return;
-        if(state.t3.revealed) return;
-
-        const dropRel = e.currentTarget.getAttribute("data-drop");
-        state.t3.dropped = dropRel;
-
-        state.tries += 1;
-        updateScore();
-
-        const ok = dropRel === state.t3.correct;
-
-        ui.drops.forEach(d => d.classList.remove("ok","no"));
-        e.currentTarget.classList.add(ok ? "ok" : "no");
-
-        if(ok){
-          state.good += 1;
-          state.round += 1;
-          updateScore();
-          setFeedback("😄", "goed", " ");
-          state.t3.revealed = true;
-        }else{
-          setFeedback("😕", "nog", " ");
-        }
-      }
-
-      function showOnly(task){
-        ui.task1.classList.toggle("hidden", task !== "t1");
-        ui.task2.classList.toggle("hidden", task !== "t2");
-        ui.task3.classList.toggle("hidden", task !== "t3");
-      }
-
-      function makeRound(){
-        // clear feedback
-        setFeedback("🙂", " ", " ");
-
-        // pick task
-        state.activeTask = chooseTask();
-        setTaskUI(state.activeTask);
-        showOnly(state.activeTask);
-
-        // make content
-        if(state.activeTask === "t1") makeTask1();
-        if(state.activeTask === "t2") makeTask2();
-        if(state.activeTask === "t3") makeTask3();
-      }
-
-      function reveal(){
-        if(state.activeTask === "t1"){
-          state.t1.revealed = true;
-          const idx = state.t1.correctIdx;
-          const els = $$(".basket", ui.baskets1);
-          els.forEach((el, i) => {
-            el.classList.remove("good","bad");
-            if(i === idx) el.classList.add("good");
-          });
-          setFeedback("👀", "toon", " ");
-          return;
-        }
-
-        if(state.activeTask === "t2"){
-          state.t2.revealed = true;
-          const promptRel = state.t2.promptRel;
-          const correctCards = state.t2.cards.filter(c => c.rel === promptRel).map(c => c.id);
-          const correctKeys = new Set(correctCards.map(id => id + ":" + promptRel));
-
-          $$(".choiceBtn", ui.cards2).forEach(btn => {
-            const box = btn.closest(".cardBox");
-            const id = box.dataset.id;
-            const rel = btn.dataset.rel;
-            const key = id + ":" + rel;
-            btn.classList.remove("good","bad");
-            if(correctKeys.has(key)) btn.classList.add("good");
-          });
-
-          setFeedback("👀", "toon", " ");
-          return;
-        }
-
-        if(state.activeTask === "t3"){
-          state.t3.revealed = true;
-          ui.drops.forEach(d => {
-            d.classList.remove("ok","no");
-            const rel = d.getAttribute("data-drop");
-            if(rel === state.t3.correct) d.classList.add("ok");
-          });
-          setFeedback("👀", "toon", " ");
-        }
-      }
-
-      function resetAll(){
-        state.round = 1;
-        state.good = 0;
-        state.tries = 0;
-        updateScore();
-        setFeedback("🙂", " ", " ");
-        makeRound();
-      }
-
-      function wire(){
-        ui.taskSelect.addEventListener("change", () => {
-          state.taskMode = ui.taskSelect.value;
-          makeRound();
-        });
-
-        ui.nextBtn.addEventListener("click", () => {
-          makeRound();
-        });
-
-        ui.checkBtn.addEventListener("click", () => {
-          if(state.activeTask === "t2") checkTask2();
-          if(state.activeTask === "t1") {
-            // no separate check, clicks are answers
-            setFeedback("👆", "klik", " ");
-          }
-          if(state.activeTask === "t3"){
-            setFeedback("🧲", "sleep", " ");
-          }
-        });
-
-        ui.revealBtn.addEventListener("click", reveal);
-        ui.resetBtn.addEventListener("click", resetAll);
-
-        ui.homeBtn.addEventListener("click", () => {
-          setFeedback("🛒", " ", " ");
-        });
-
-        // drag and drop
-        ui.dragToken.addEventListener("dragstart", (e) => {
-          if(state.activeTask !== "t3") return;
-     <!DOCTYPE html>
-<html lang="nl">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Supermarkt rekenkwartier</title>
-  <style>
-    :root{
-      --bg: #f6f7fb;
-      --card: #ffffff;
-      --ink: #17171b;
-      --muted: #5c5c69;
-      --accent: #2b6cff;
-      --ok: #1d9b5b;
-      --no: #d64545;
-      --shadow: 0 14px 34px rgba(0,0,0,.10);
-      --radius: 22px;
-      --r2: 18px;
-    }
-
-    *{ box-sizing:border-box; }
-    html, body{
-      height:100%;
-      margin:0;
-      overflow:hidden;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      background: radial-gradient(1200px 700px at 50% -10%, #e8efff, var(--bg));
-      color: var(--ink);
-    }
-
-    .app{
-      height: 100vh;
-      height: 100dvh;
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 14px;
-      padding-bottom: calc(14px + env(safe-area-inset-bottom));
-      display: grid;
-      grid-template-rows: auto auto 1fr auto;
-      gap: 12px;
-    }
-
-    .top{
-      background: rgba(255,255,255,.84);
-      border: 1px solid rgba(0,0,0,.06);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(8px);
-      padding: 12px 14px;
-      display: grid;
-      grid-template-columns: auto 1fr auto;
-      align-items: center;
-      gap: 12px;
-      min-height: 72px;
-    }
-
-    .logo{
-      width: 52px;
-      height: 52px;
-      border-radius: 18px;
-      display: grid;
-      place-items: center;
-      background: linear-gradient(135deg, #2b6cff, #7b5cff);
-      color: #fff;
-      font-size: 28px;
-      user-select: none;
-      cursor: pointer;
-      box-shadow: 0 18px 40px rgba(43,108,255,.22);
-    }
-
-    .titleBox{
-      min-width: 0;
-      display: grid;
-      gap: 4px;
-    }
-    .title{
-      font-weight: 950;
-      font-size: clamp(16px, 2vw, 22px);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      letter-spacing: .2px;
-    }
-    .subtitle{
-      color: var(--muted);
-      font-weight: 800;
-      font-size: clamp(12px, 1.5vw, 16px);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .topRight{
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      justify-content: flex-end;
-      flex-wrap: wrap;
-    }
-
-    .pill{
-      border: 1px solid rgba(0,0,0,.08);
-      background: #fff;
-      border-radius: 999px;
-      padding: 10px 12px;
-      font-size: 14px;
-      color: var(--muted);
-      box-shadow: 0 12px 24px rgba(0,0,0,.06);
-      user-select: none;
-      white-space: nowrap;
-      font-weight: 900;
-    }
-    .pill b{ color: var(--ink); }
-
-    .btn{
-      border: 1px solid rgba(0,0,0,.10);
-      background: #fff;
-      border-radius: 18px;
-      padding: 12px 14px;
-      font-size: 15px;
-      font-weight: 950;
-      cursor: pointer;
-      box-shadow: 0 12px 24px rgba(0,0,0,.06);
-      user-select: none;
-    }
-    .btn:active{ transform: translateY(1px); }
-    .btn.primary{
-      border: 0;
-      color: #fff;
-      background: linear-gradient(135deg, rgba(43,108,255,.95), rgba(123,92,255,.92));
-    }
-    .btn.ghost{
-      background: rgba(255,255,255,.65);
-    }
-
-    .taskBar{
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 12px;
-      align-items: center;
-    }
-
-    .taskCard{
-      background: var(--card);
-      border-radius: var(--radius);
-      border: 1px solid rgba(0,0,0,.06);
-      box-shadow: var(--shadow);
-      padding: 12px 14px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      justify-content: space-between;
-      min-height: 68px;
-    }
-
-    .taskLeft{
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      min-width: 0;
-    }
-    .taskIcon{
-      width: 46px;
-      height: 46px;
-      border-radius: 16px;
-      display: grid;
-      place-items: center;
-      font-size: 24px;
-      background: rgba(43,108,255,.10);
-      border: 1px solid rgba(43,108,255,.18);
-      user-select: none;
-      flex: 0 0 auto;
-    }
-    .taskHint{
-      font-weight: 950;
-      font-size: clamp(16px, 2.2vw, 24px);
-      letter-spacing: .2px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .taskRight{
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      flex-wrap: wrap;
-      justify-content: flex-end;
-    }
-
-    select{
-      border: 1px solid rgba(0,0,0,.14);
-      background: #fff;
-      border-radius: 16px;
-      padding: 12px 12px;
-      font-size: 15px;
-      font-weight: 900;
-      box-shadow: 0 10px 20px rgba(0,0,0,.06);
-    }
-
-    .board{
-      min-height: 0;
-      display: grid;
-      gap: 12px;
-      align-content: start;
-    }
-
-    .baskets{
-      min-height: 0;
-      display: grid;
-      gap: 12px;
-    }
-    .baskets.two{ grid-template-columns: 1fr 1fr; }
-    .baskets.three{ grid-template-columns: 1fr 1fr 1fr; }
-
-    .basket{
-      background: rgba(255,255,255,.86);
-      border: 1px solid rgba(0,0,0,.06);
-      border-radius: 26px;
-      box-shadow: var(--shadow);
-      padding: 12px;
-      display: grid;
-      grid-template-rows: auto 1fr auto;
-      min-height: 220px;
-      overflow: hidden;
       position: relative;
-      user-select: none;
-    }
-    .basket.clickable{ cursor:pointer; }
-    .basket.good{ outline: 6px solid rgba(29,155,91,.18); }
-    .basket.bad{ outline: 6px solid rgba(214,69,69,.16); }
-
-    .bHead{
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-      padding-bottom: 10px;
-    }
-    .bName{
-      font-weight: 950;
-      font-size: clamp(14px, 1.7vw, 18px);
-      color: var(--muted);
-      white-space: nowrap;
-    }
-    .bBadge{
-      font-size: clamp(12px, 1.4vw, 15px);
-      font-weight: 950;
-      padding: 8px 12px;
-      border-radius: 999px;
-      border: 1px solid rgba(0,0,0,.08);
-      background: #fff;
-      white-space: nowrap;
-    }
-
-    .items{
-      display: grid;
-      gap: 10px;
-      align-content: start;
-      justify-items: center;
-      grid-template-columns: repeat(4, 1fr);
-      padding: 4px;
-      min-height: 0;
-    }
-    .item{
-      width: 100%;
-      aspect-ratio: 1 / 1;
-      border-radius: 20px;
-      display: grid;
-      place-items: center;
-      font-size: clamp(26px, 3.4vw, 46px);
-      background: #fff;
-      border: 1px solid rgba(0,0,0,.08);
-      box-shadow: 0 10px 22px rgba(0,0,0,.06);
-    }
-
-    .dotsRow{
-      margin-top: 10px;
-      padding-top: 10px;
-      border-top: 1px dashed rgba(0,0,0,.12);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-    }
-    .dotCard{
-      display: grid;
-      grid-template-columns: repeat(3, 12px);
-      grid-auto-rows: 12px;
-      gap: 7px;
-      padding: 10px;
-      border-radius: 18px;
-      background: #fff;
-      border: 1px solid rgba(0,0,0,.08);
-      box-shadow: 0 10px 22px rgba(0,0,0,.06);
-      min-width: 140px;
-      justify-content: center;
-      align-content: center;
-    }
-    .dot{
-      width: 12px;
-      height: 12px;
-      border-radius: 99px;
-      background: rgba(0,0,0,.12);
-    }
-    .dot.on{
-      background: rgba(43,108,255,.95);
-      box-shadow: 0 0 0 5px rgba(43,108,255,.10);
-    }
-
-    .answerRow{
-      background: var(--card);
-      border-radius: var(--radius);
-      border: 1px solid rgba(0,0,0,.06);
-      box-shadow: var(--shadow);
-      padding: 12px 14px;
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 12px;
-      align-items: center;
-      min-height: 74px;
-    }
-
-    .feedback{
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      min-width: 0;
-    }
-    .face{
-      font-size: 44px;
-      line-height: 1;
-      user-select: none;
-    }
-    .fbText{
-      display: grid;
-      gap: 4px;
-      min-width: 0;
-    }
-    .fbMain{
-      font-weight: 950;
-      font-size: clamp(16px, 2vw, 22px);
-      white-space: nowrap;
       overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .fbSub{
-      color: var(--muted);
-      font-weight: 850;
-      font-size: clamp(12px, 1.6vw, 16px);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
     }
 
-    .miniBtns{
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      justify-content: flex-end;
-      flex-wrap: wrap;
-    }
-
-    .cardsGrid{
-      display: grid;
-      gap: 12px;
-      grid-template-columns: 1fr 1fr 1fr;
-    }
-
-    .cardBox{
-      background: rgba(255,255,255,.86);
-      border: 1px solid rgba(0,0,0,.06);
-      border-radius: 26px;
-      box-shadow: var(--shadow);
-      padding: 12px;
-      display: grid;
-      gap: 10px;
-      user-select: none;
-    }
-
-    .cardTop{
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .bigLabel{
-      font-weight: 950;
-      font-size: clamp(16px, 2vw, 22px);
-      display: flex;
-      gap: 10px;
-      align-items: center;
-    }
-    .chip{
-      padding: 8px 12px;
-      border-radius: 999px;
-      font-weight: 950;
-      border: 1px solid rgba(0,0,0,.08);
-      background: #fff;
-      color: var(--muted);
-      white-space: nowrap;
-    }
-
-    .compareRow{
-      display: grid;
-      grid-template-columns: 1fr auto 1fr;
-      gap: 10px;
-      align-items: center;
-    }
-
-    .miniBasket{
-      background: #fff;
-      border: 1px solid rgba(0,0,0,.10);
-      border-radius: 20px;
-      padding: 10px;
-      display: grid;
-      gap: 10px;
-    }
-    .miniItems{
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 8px;
-      align-content: start;
-      justify-items: center;
-      min-height: 90px;
-    }
-    .miniItem{
-      width: 100%;
-      aspect-ratio: 1 / 1;
-      border-radius: 14px;
-      display: grid;
-      place-items: center;
-      font-size: clamp(20px, 2.6vw, 34px);
-      border: 1px solid rgba(0,0,0,.08);
-      box-shadow: 0 8px 16px rgba(0,0,0,.06);
-      background: #fff;
-    }
-    .equals{
-      font-size: 26px;
-      font-weight: 950;
-      color: var(--muted);
-      user-select: none;
-    }
-
-    .choiceLine{
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 10px;
-    }
-    .choiceBtn{
-      border: 1px solid rgba(0,0,0,.10);
-      background: #fff;
-      border-radius: 18px;
-      padding: 14px 10px;
-      font-weight: 950;
-      font-size: 18px;
-      cursor: pointer;
-      box-shadow: 0 10px 18px rgba(0,0,0,.06);
-      display: grid;
-      gap: 6px;
-      justify-items: center;
-      user-select: none;
-      min-height: 80px;
-    }
-    .choiceBtn:active{ transform: translateY(1px); }
-    .choiceBtn.selected{
-      outline: 6px solid rgba(43,108,255,.18);
-    }
-    .choiceBtn.good{
-      outline: 6px solid rgba(29,155,91,.18);
-    }
-    .choiceBtn.bad{
-      outline: 6px solid rgba(214,69,69,.16);
-    }
-    .choiceBtn .icon{
-      font-size: 26px;
-      line-height: 1;
-    }
-
-    .dragWrap{
-      display: grid;
-      gap: 12px;
-      align-items: start;
-      grid-template-columns: 1fr 1fr;
-    }
-    .dragCard{
-      background: #fff;
-      border: 1px solid rgba(0,0,0,.10);
-      border-radius: 22px;
-      padding: 14px;
-      display: grid;
-      gap: 10px;
-      box-shadow: 0 10px 18px rgba(0,0,0,.06);
-    }
     .draggable{
-      border: 0;
       border-radius: 20px;
       background: rgba(43,108,255,.10);
       border: 1px solid rgba(43,108,255,.18);
@@ -1798,13 +498,18 @@
       display: grid;
       gap: 8px;
       justify-items: center;
-      cursor: grab;
       user-select: none;
       box-shadow: 0 10px 18px rgba(0,0,0,.06);
       touch-action: none;
+      cursor: grab;
+      width: 100%;
+      max-width: 340px;
     }
     .draggable:active{ cursor: grabbing; }
+    .draggable.selected{ outline: 6px solid rgba(43,108,255,.18); }
+
     .drIcon{ font-size: 30px; }
+
     .dropZones{
       display: grid;
       gap: 10px;
@@ -1819,6 +524,8 @@
       grid-template-columns: auto 1fr;
       gap: 12px;
       align-items: center;
+      user-select: none;
+      touch-action: manipulation;
     }
     .drop.ok{
       border-color: rgba(29,155,91,.34);
@@ -1827,6 +534,11 @@
     .drop.no{
       border-color: rgba(214,69,69,.30);
       background: rgba(214,69,69,.07);
+    }
+    .drop.hover{
+      outline: 6px solid rgba(43,108,255,.14);
+      border-color: rgba(43,108,255,.35);
+      background: rgba(43,108,255,.06);
     }
     .dropIcon{
       width: 46px;
@@ -1847,11 +559,27 @@
       user-select: none;
     }
 
+    .floatingToken{
+      position: fixed;
+      left: 0;
+      top: 0;
+      transform: translate(-9999px, -9999px);
+      z-index: 9999;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity .08s ease;
+    }
+    .floatingToken.on{
+      opacity: 1;
+    }
+
     .hidden{ display:none !important; }
 
     @media (max-width: 1100px){
       .cardsGrid{ grid-template-columns: 1fr; }
       .items{ grid-template-columns: repeat(3, 1fr); }
+      .dragWrap{ grid-template-columns: 1fr; }
+      .draggable{ max-width: 100%; }
     }
   </style>
 </head>
@@ -1864,7 +592,7 @@
 
       <div class="titleBox">
         <div class="title">Supermarkt</div>
-        <div class="subtitle" id="subtitle">Kies taak, of mix</div>
+        <div class="subtitle" id="subtitle">Kies taak of mix</div>
       </div>
 
       <div class="topRight">
@@ -1878,14 +606,14 @@
       <div class="taskCard">
         <div class="taskLeft">
           <div class="taskIcon" id="taskIcon">🏆</div>
-          <div class="taskHint" id="taskHint">Klik</div>
+          <div class="taskHint" id="taskHint">Klik op het juiste mandje</div>
         </div>
         <div class="taskRight">
           <select id="taskSelect" aria-label="Taak">
             <option value="mix">mix</option>
-            <option value="t1">1</option>
-            <option value="t2">2</option>
-            <option value="t3">3</option>
+            <option value="t1">opdracht 1</option>
+            <option value="t2">opdracht 2</option>
+            <option value="t3">opdracht 3</option>
           </select>
           <button class="btn ghost" id="checkBtn">Check</button>
         </div>
@@ -1896,25 +624,25 @@
 
     <div class="board">
 
-      <!-- Opdracht 1 -->
       <div id="task1" class="hidden">
         <div class="baskets three" id="baskets1"></div>
       </div>
 
-      <!-- Opdracht 2 -->
       <div id="task2" class="hidden">
         <div class="cardsGrid" id="cards2"></div>
       </div>
 
-      <!-- Opdracht 3 -->
       <div id="task3" class="hidden">
         <div class="dragWrap">
           <div class="dragCard">
-            <div class="bigLabel"><span id="dragPromptIcon">🧺</span><span id="dragPromptText"> </span></div>
-            <div class="draggable" id="dragToken" draggable="true">
-              <div class="drIcon">🧺</div>
+            <div class="bigLabel"><span id="dragPromptIcon">🧺</span><span id="dragPromptText">Sleep of tik</span></div>
+
+            <div class="draggable" id="dragToken">
+              <div class="drIcon" id="dragEmoji">🧺</div>
               <div style="font-weight:950; font-size:18px; color:var(--muted);" id="dragTokenText"> </div>
             </div>
+
+            <div style="font-weight:850; color:var(--muted); font-size:14px;">Tip: tik het kaartje, tik daarna een antwoord</div>
           </div>
 
           <div class="dropZones">
@@ -1953,6 +681,13 @@
 
   </div>
 
+  <div class="floatingToken" id="floatingToken">
+    <div class="draggable" style="max-width:340px;">
+      <div class="drIcon" id="floatingEmoji">🧺</div>
+      <div style="font-weight:950; font-size:18px; color:var(--muted);" id="floatingText"> </div>
+    </div>
+  </div>
+
   <script>
     (function(){
       "use strict";
@@ -1978,20 +713,20 @@
         good: 0,
         tries: 0,
 
-        taskMode: "mix",     // mix, t1, t2, t3
+        taskMode: "mix",
         activeTask: "t1",
 
-        // task1
         t1: { goal: "most", baskets: [], correctIdx: 0, revealed: false },
+        t2: { cards: [], selected: new Set(), revealed: false, promptRel: "more" },
+        t3: { a: 1, b: 1, correct: "equal", revealed: false, dropped: null, tapArmed: false },
 
-        // task2
-        t2: { cards: [], selected: new Set(), revealed: false },
+        config: { maxQty: 6 },
 
-        // task3
-        t3: { a: 1, b: 1, correct: "equal", revealed: false, dropped: null },
-
-        config: {
-          maxQty: 6
+        drag: {
+          active: false,
+          pointerId: null,
+          offsetX: 0,
+          offsetY: 0
         }
       };
 
@@ -2016,9 +751,12 @@
 
         dragToken: $("#dragToken"),
         dragTokenText: $("#dragTokenText"),
-        dragPromptIcon: $("#dragPromptIcon"),
-        dragPromptText: $("#dragPromptText"),
+        dragEmoji: $("#dragEmoji"),
         drops: $$(".drop"),
+
+        floatingToken: $("#floatingToken"),
+        floatingEmoji: $("#floatingEmoji"),
+        floatingText: $("#floatingText"),
 
         revealBtn: $("#revealBtn"),
         resetBtn: $("#resetBtn"),
@@ -2026,6 +764,9 @@
         face: $("#face"),
         fbMain: $("#fbMain"),
         fbSub: $("#fbSub"),
+
+        subtitle: $("#subtitle"),
+        homeBtn: $("#homeBtn"),
       };
 
       function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
@@ -2045,21 +786,17 @@
       }
 
       function setTaskUI(task){
-        // minimale hints, vooral iconen
         if(task === "t1"){
           ui.taskIcon.textContent = "🏆";
-          ui.taskHint.textContent = "klik";
-          ui.tinyPill.textContent = "meeste of minste";
+          ui.taskHint.textContent = "Klik op het juiste mandje";
         }
         if(task === "t2"){
           ui.taskIcon.textContent = "👆";
-          ui.taskHint.textContent = "tik";
-          ui.tinyPill.textContent = "meer, minder, evenveel";
+          ui.taskHint.textContent = "Klik op alle goede vakken";
         }
         if(task === "t3"){
           ui.taskIcon.textContent = "🧲";
-          ui.taskHint.textContent = "sleep";
-          ui.tinyPill.textContent = "meer, minder, evenveel";
+          ui.taskHint.textContent = "Sleep naar meer, minder of evenveel";
         }
       }
 
@@ -2076,7 +813,6 @@
         const onCount = clamp(qty, 0, maxCells);
         const arr = new Array(maxCells).fill(false).map((_, i) => i < onCount);
 
-        // shuffle for less counting pattern
         for(let i = arr.length - 1; i > 0; i--){
           const j = randInt(0, i);
           [arr[i], arr[j]] = [arr[j], arr[i]];
@@ -2134,7 +870,13 @@
         el.appendChild(dotsRow);
       }
 
-      // Task 1, click baskets for most or least
+      function relation(a,b){
+        if(a > b) return "more";
+        if(a < b) return "less";
+        return "equal";
+      }
+
+      // Task 1
       function makeTask1(){
         state.t1.revealed = false;
 
@@ -2183,11 +925,11 @@
               state.good += 1;
               state.round += 1;
               updateScore();
-              setFeedback("😄", "goed", " ");
+              setFeedback("😄", "goed", "");
               el.classList.add("good");
               state.t1.revealed = true;
             }else{
-              setFeedback("😕", "nog", " ");
+              setFeedback("😕", "nog", "");
               el.classList.add("bad");
               setTimeout(() => el.classList.remove("bad"), 420);
             }
@@ -2196,29 +938,25 @@
           ui.baskets1.appendChild(el);
         });
 
-        setFeedback("👀", goal === "most" ? "meeste" : "minste", " ");
+        ui.tinyPill.textContent = goal === "most" ? "Waar is het meeste" : "Waar is het minste";
+        setFeedback("👀", goal === "most" ? "meeste" : "minste", "");
       }
 
-      // Task 2, multi select correct boxes
+      // Task 2
       function makeComparePair(max){
         let a = randInt(1, max);
         let b = randInt(1, max);
+
+        // 25 procent kans op evenveel
+        if(Math.random() < 0.25){
+          b = a;
+          return [a, b];
+        }
+
         while(a === b){
           b = randInt(1, max);
         }
-        return [a,b];
-      }
-
-      function relation(a,b){
-        if(a > b) return "more";
-        if(a < b) return "less";
-        return "equal";
-      }
-
-      function relIcon(rel){
-        if(rel === "more") return "➕";
-        if(rel === "less") return "➖";
-        return "🟰";
+        return [a, b];
       }
 
       function makeTask2(){
@@ -2227,28 +965,21 @@
 
         const max = clamp(state.config.maxQty, 3, 12);
 
-        // three cards, can have multiple correct among them
-        // prompt chooses one relation, then multiple cards match
         const promptRel = pick(["more","less","equal"]);
-        const promptIcon = relIcon(promptRel);
+        state.t2.promptRel = promptRel;
 
         const cards = [];
-
-        // build 3 comparisons, ensure at least one matches promptRel
         let ensured = false;
 
         for(let i = 0; i < 3; i++){
           const p = pick(products);
           const [a,b] = makeComparePair(max);
-
           const rel = relation(a,b);
           cards.push({ id: "c" + i, product: p, a, b, rel });
-
           if(rel === promptRel) ensured = true;
         }
 
         if(!ensured){
-          // force one card to match promptRel
           const j = randInt(0, 2);
           const p = cards[j].product;
 
@@ -2267,10 +998,13 @@
         }
 
         state.t2.cards = cards;
-        state.t2.promptRel = promptRel;
 
         ui.cards2.innerHTML = "";
         ui.cards2.className = "cardsGrid";
+
+        const promptWord = promptRel === "more" ? "meer" : promptRel === "less" ? "minder" : "evenveel";
+        ui.tinyPill.textContent = "Klik alles met " + promptWord;
+        setFeedback("👆", promptWord, "");
 
         cards.forEach((c) => {
           const box = document.createElement("div");
@@ -2337,6 +1071,7 @@
             btn.type = "button";
             btn.dataset.rel = rel;
             btn.innerHTML = `<div class="icon">${icon}</div><div>${word}</div>`;
+
             btn.addEventListener("click", () => {
               if(state.activeTask !== "t2") return;
               if(state.t2.revealed) return;
@@ -2351,6 +1086,7 @@
                 btn.classList.add("selected");
               }
             });
+
             return btn;
           };
 
@@ -2364,9 +1100,6 @@
 
           ui.cards2.appendChild(box);
         });
-
-        setFeedback(promptIcon, "tik", " ");
-        ui.tinyPill.textContent = promptRel === "more" ? "meer" : promptRel === "less" ? "minder" : "evenveel";
       }
 
       function checkTask2(){
@@ -2376,21 +1109,14 @@
         updateScore();
 
         const promptRel = state.t2.promptRel;
-        // correct set: for each card, only the button that matches actual relation counts as correct
-        // but the instruction is: click all boxes where you see promptRel
-        // so: correct answers are cards whose relation equals promptRel, and within those, the pressed button must be the promptRel
-        // simplest for kids: they must click the promptRel button on each matching card, and not click promptRel on non matching cards
 
         const correctCards = state.t2.cards.filter(c => c.rel === promptRel).map(c => c.id);
         const correctKeys = new Set(correctCards.map(id => id + ":" + promptRel));
 
-        // evaluate: selected must equal correctKeys
         let ok = true;
-        // any missing
         for(const k of correctKeys){
           if(!state.t2.selected.has(k)) ok = false;
         }
-        // any extra
         for(const k of state.t2.selected){
           if(!correctKeys.has(k)) ok = false;
         }
@@ -2399,9 +1125,9 @@
           state.good += 1;
           state.round += 1;
           updateScore();
-          setFeedback("😄", "goed", " ");
+          setFeedback("😄", "goed", "");
           state.t2.revealed = true;
-          // mark UI
+
           $$(".choiceBtn", ui.cards2).forEach(btn => {
             const box = btn.closest(".cardBox");
             const id = box.dataset.id;
@@ -2411,22 +1137,22 @@
             else if(state.t2.selected.has(key)) btn.classList.add("bad");
           });
         }else{
-          setFeedback("😕", "nog", " ");
-          // quick hint by flashing correct ones only if reveal later, now do nothing
+          setFeedback("😕", "nog", "");
         }
       }
 
-      // Task 3, drag token to drop zone
+      // Task 3, pointer drag plus tap fallback
       function makeTask3(){
         state.t3.revealed = false;
         state.t3.dropped = null;
+        state.t3.tapArmed = false;
+        ui.dragToken.classList.remove("selected");
 
         const max = clamp(state.config.maxQty, 3, 12);
 
         let a = randInt(1, max);
         let b = randInt(1, max);
 
-        // allow equal sometimes
         if(Math.random() < 0.28){
           b = a;
         }else{
@@ -2437,51 +1163,17 @@
         state.t3.b = b;
         state.t3.correct = relation(a,b);
 
-        // show prompt as minimal icon content
-        ui.dragPromptIcon.textContent = "🧺";
-        ui.dragPromptText.textContent = " ";
-
-        // token text shows tiny picture instead of text
         const p = pick(products);
-        ui.dragToken.querySelector(".drIcon").textContent = p.emoji;
+        ui.dragEmoji.textContent = p.emoji;
         ui.dragTokenText.textContent = String(a) + " ↔ " + String(b);
 
-        // reset drop zone styles
-        ui.drops.forEach(d => {
-          d.classList.remove("ok","no");
-        });
+        ui.floatingEmoji.textContent = p.emoji;
+        ui.floatingText.textContent = String(a) + " ↔ " + String(b);
 
-        setFeedback("🧲", "sleep", " ");
-        ui.tinyPill.textContent = "➕  ➖  🟰";
-      }
+        ui.drops.forEach(d => d.classList.remove("ok","no","hover"));
 
-      function allowDrop(e){ e.preventDefault(); }
-
-      function onDrop(e){
-        e.preventDefault();
-        if(state.activeTask !== "t3") return;
-        if(state.t3.revealed) return;
-
-        const dropRel = e.currentTarget.getAttribute("data-drop");
-        state.t3.dropped = dropRel;
-
-        state.tries += 1;
-        updateScore();
-
-        const ok = dropRel === state.t3.correct;
-
-        ui.drops.forEach(d => d.classList.remove("ok","no"));
-        e.currentTarget.classList.add(ok ? "ok" : "no");
-
-        if(ok){
-          state.good += 1;
-          state.round += 1;
-          updateScore();
-          setFeedback("😄", "goed", " ");
-          state.t3.revealed = true;
-        }else{
-          setFeedback("😕", "nog", " ");
-        }
+        ui.tinyPill.textContent = "Sleep naar meer, minder of evenveel";
+        setFeedback("🧲", "sleep", "of tik");
       }
 
       function showOnly(task){
@@ -2491,15 +1183,12 @@
       }
 
       function makeRound(){
-        // clear feedback
-        setFeedback("🙂", " ", " ");
+        setFeedback("🙂", "", "");
 
-        // pick task
         state.activeTask = chooseTask();
         setTaskUI(state.activeTask);
         showOnly(state.activeTask);
 
-        // make content
         if(state.activeTask === "t1") makeTask1();
         if(state.activeTask === "t2") makeTask2();
         if(state.activeTask === "t3") makeTask3();
@@ -2514,7 +1203,7 @@
             el.classList.remove("good","bad");
             if(i === idx) el.classList.add("good");
           });
-          setFeedback("👀", "toon", " ");
+          setFeedback("👀", "toon", "");
           return;
         }
 
@@ -2533,18 +1222,18 @@
             if(correctKeys.has(key)) btn.classList.add("good");
           });
 
-          setFeedback("👀", "toon", " ");
+          setFeedback("👀", "toon", "");
           return;
         }
 
         if(state.activeTask === "t3"){
           state.t3.revealed = true;
           ui.drops.forEach(d => {
-            d.classList.remove("ok","no");
+            d.classList.remove("ok","no","hover");
             const rel = d.getAttribute("data-drop");
             if(rel === state.t3.correct) d.classList.add("ok");
           });
-          setFeedback("👀", "toon", " ");
+          setFeedback("👀", "toon", "");
         }
       }
 
@@ -2553,8 +1242,112 @@
         state.good = 0;
         state.tries = 0;
         updateScore();
-        setFeedback("🙂", " ", " ");
+        setFeedback("🙂", "", "");
         makeRound();
+      }
+
+      // Task 3 logic
+      function evaluateDrop(rel){
+        if(state.activeTask !== "t3") return;
+        if(state.t3.revealed) return;
+
+        state.tries += 1;
+        updateScore();
+
+        const ok = rel === state.t3.correct;
+
+        ui.drops.forEach(d => d.classList.remove("ok","no","hover"));
+        const target = ui.drops.find(d => d.getAttribute("data-drop") === rel);
+        if(target) target.classList.add(ok ? "ok" : "no");
+
+        if(ok){
+          state.good += 1;
+          state.round += 1;
+          updateScore();
+          setFeedback("😄", "goed", "");
+          state.t3.revealed = true;
+          state.t3.tapArmed = false;
+          ui.dragToken.classList.remove("selected");
+        }else{
+          setFeedback("😕", "nog", "");
+        }
+      }
+
+      function clearHover(){
+        ui.drops.forEach(d => d.classList.remove("hover"));
+      }
+
+      function getDropUnderPointer(x, y){
+        for(const d of ui.drops){
+          const r = d.getBoundingClientRect();
+          if(x >= r.left && x <= r.right && y >= r.top && y <= r.bottom){
+            return d;
+          }
+        }
+        return null;
+      }
+
+      function beginPointerDrag(e){
+        if(state.activeTask !== "t3") return;
+        if(state.t3.revealed) return;
+
+        state.drag.active = true;
+        state.drag.pointerId = e.pointerId;
+
+        const rect = ui.dragToken.getBoundingClientRect();
+        state.drag.offsetX = e.clientX - rect.left;
+        state.drag.offsetY = e.clientY - rect.top;
+
+        ui.floatingToken.classList.add("on");
+        ui.floatingToken.style.transform = `translate(${e.clientX - state.drag.offsetX}px, ${e.clientY - state.drag.offsetY}px)`;
+
+        ui.dragToken.setPointerCapture(e.pointerId);
+        clearHover();
+
+        e.preventDefault();
+      }
+
+      function movePointerDrag(e){
+        if(!state.drag.active) return;
+        if(state.drag.pointerId !== e.pointerId) return;
+
+        ui.floatingToken.style.transform = `translate(${e.clientX - state.drag.offsetX}px, ${e.clientY - state.drag.offsetY}px)`;
+
+        clearHover();
+        const d = getDropUnderPointer(e.clientX, e.clientY);
+        if(d) d.classList.add("hover");
+
+        e.preventDefault();
+      }
+
+      function endPointerDrag(e){
+        if(!state.drag.active) return;
+        if(state.drag.pointerId !== e.pointerId) return;
+
+        state.drag.active = false;
+        state.drag.pointerId = null;
+
+        ui.floatingToken.classList.remove("on");
+        ui.floatingToken.style.transform = "translate(-9999px, -9999px)";
+
+        const d = getDropUnderPointer(e.clientX, e.clientY);
+        clearHover();
+
+        if(d){
+          const rel = d.getAttribute("data-drop");
+          evaluateDrop(rel);
+        }
+
+        e.preventDefault();
+      }
+
+      function toggleTapArm(){
+        if(state.activeTask !== "t3") return;
+        if(state.t3.revealed) return;
+
+        state.t3.tapArmed = !state.t3.tapArmed;
+        ui.dragToken.classList.toggle("selected", state.t3.tapArmed);
+        setFeedback("🧲", state.t3.tapArmed ? "tik een antwoord" : "sleep of tik", "");
       }
 
       function wire(){
@@ -2569,75 +1362,54 @@
 
         ui.checkBtn.addEventListener("click", () => {
           if(state.activeTask === "t2") checkTask2();
-          if(state.activeTask === "t1") {
-            // no separate check, clicks are answers
-            setFeedback("👆", "klik", " ");
-          }
-          if(state.activeTask === "t3"){
-            setFeedback("🧲", "sleep", " ");
-          }
+          else setFeedback("👆", "doe", "");
         });
 
         ui.revealBtn.addEventListener("click", reveal);
         ui.resetBtn.addEventListener("click", resetAll);
 
+        // Task 3 pointer events
+        ui.dragToken.addEventListener("pointerdown", (e) => {
+          // korte tik is ook nuttig, dus we starten drag, maar tik is toggle taparm op pointerup zonder beweging
+          beginPointerDrag(e);
+        });
+        ui.dragToken.addEventListener("pointermove", movePointerDrag);
+        ui.dragToken.addEventListener("pointerup", (e) => {
+          // als er geen drop is, beschouw als tik
+          const d = getDropUnderPointer(e.clientX, e.clientY);
+          endPointerDrag(e);
+          if(!d){
+            toggleTapArm();
+          }
+        });
+        ui.dragToken.addEventListener("pointercancel", endPointerDrag);
+
+        // Task 3 tap on drop zones
+        ui.drops.forEach(d => {
+          d.addEventListener("click", () => {
+            if(state.activeTask !== "t3") return;
+            if(!state.t3.tapArmed) return;
+            const rel = d.getAttribute("data-drop");
+            evaluateDrop(rel);
+          });
+        });
+
+        // Keyboard shortcuts
+        window.addEventListener("keydown", (e) => {
+          const k = e.key.toLowerCase();
+          if(k === " ") { e.preventDefault(); makeRound(); }
+          if(k === "c") { if(state.activeTask === "t2") checkTask2(); }
+          if(k === "t") { reveal(); }
+          if(k === "1") { state.taskMode = "t1"; ui.taskSelect.value = "t1"; makeRound(); }
+          if(k === "2") { state.taskMode = "t2"; ui.taskSelect.value = "t2"; makeRound(); }
+          if(k === "3") { state.taskMode = "t3"; ui.taskSelect.value = "t3"; makeRound(); }
+          if(k === "m") { state.taskMode = "mix"; ui.taskSelect.value = "mix"; makeRound(); }
+        });
+
+        // Home button as soft reset for lesson flow
         ui.homeBtn.addEventListener("click", () => {
-          setFeedback("🛒", " ", " ");
-        });
-
-        // drag and drop
-        ui.dragToken.addEventListener("dragstart", (e) => {
-          if(state.activeTask !== "t3") return;
-          e.dataTransfer.setData("text/plain", "token");
-        });
-
-        ui.drops.forEach(d => {
-          d.addEventListener("dragover", allowDrop);
-          d.addEventListener("drop", onDrop);
-        });
-
-        // keyboard shortcuts on laptop
-        window.addEventListener("keydown", (e) => {
-          const k = e.key.toLowerCase();
-          if(k === " ") { e.preventDefault(); makeRound(); }
-          if(k === "c") { if(state.activeTask === "t2") checkTask2(); }
-          if(k === "t") { reveal(); }
-          if(k === "1") { state.taskMode = "t1"; ui.taskSelect.value = "t1"; makeRound(); }
-          if(k === "2") { state.taskMode = "t2"; ui.taskSelect.value = "t2"; makeRound(); }
-          if(k === "3") { state.taskMode = "t3"; ui.taskSelect.value = "t3"; makeRound(); }
-          if(k === "m") { state.taskMode = "mix"; ui.taskSelect.value = "mix"; makeRound(); }
-        });
-      }
-
-      function init(){
-        ui.taskSelect.value = state.taskMode;
-        updateScore();
-        wire();
-        makeRound();
-      }
-
-      window.addEventListener("load", init);
-    })();
-  </script>
-</body>
-</html>    e.dataTransfer.setData("text/plain", "token");
-        });
-
-        ui.drops.forEach(d => {
-          d.addEventListener("dragover", allowDrop);
-          d.addEventListener("drop", onDrop);
-        });
-
-        // keyboard shortcuts on laptop
-        window.addEventListener("keydown", (e) => {
-          const k = e.key.toLowerCase();
-          if(k === " ") { e.preventDefault(); makeRound(); }
-          if(k === "c") { if(state.activeTask === "t2") checkTask2(); }
-          if(k === "t") { reveal(); }
-          if(k === "1") { state.taskMode = "t1"; ui.taskSelect.value = "t1"; makeRound(); }
-          if(k === "2") { state.taskMode = "t2"; ui.taskSelect.value = "t2"; makeRound(); }
-          if(k === "3") { state.taskMode = "t3"; ui.taskSelect.value = "t3"; makeRound(); }
-          if(k === "m") { state.taskMode = "mix"; ui.taskSelect.value = "mix"; makeRound(); }
+          setFeedback("🛒", "klaar", "");
+          ui.tinyPill.textContent = "";
         });
       }
 
